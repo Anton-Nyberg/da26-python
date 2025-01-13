@@ -1,27 +1,28 @@
-def filter_music(data, mode):
-    # Creating the conditions for each playlist
-    if mode == "Peaceful_lounge":
-        condition = (
-            (data["danceability"].between(0.2, 0.6)) &
-            (data["tempo"] < 110) &
-            (data["energy"].between(0.1, 0.4)) &
-            (data["speechiness"] < 0.3)
-        )
-    elif mode == "acoustic":
-        condition = (
-            
-        )
-    elif mode == "relaxing":
-        condition = (
-            
-        )
-    elif mode == "dancing":
-        condition = (
-            
-        )
-    elif mode == "energetic_workout":
-        condition = (
-            
-        )
-    filtered_data = data[condition]
-    return filtered_data.drop_duplicates(subset="title", keep="first")
+def main():
+    st.title("Party cruise music dashboard")
+
+    final_data = pd.dataframe() # change this to the actual data when its ready
+    # Adding the buttons to the sidebar 
+    Music_type = st.sidebar.selectbox(
+        "Select playlist",
+        ("Peaceful Lounge", "Acoustic", "Relaxing", "Energetic/Workout", "Dancing")
+    )
+
+    if st.button(F"Show {"music_type"} Music"):
+        mode = music_type.lower().replace(" ", "_")
+        filtered_music = filtered_music(final_data, mode)
+        # Selecting what columns we want to have displayed in the result
+        st.write(filtered_music[["title", "artist", "popularity", "duration", "vibe_score"]])
+
+        if not filtered_music.empty:
+            # Creating the bar chart with information about the list
+            avg_data = filtered_music[["danceability", "energy", "tempo", "speechiness"]].mean()
+            st.bar_chart(avg_data)
+
+            song_name = st.selectbox("Select a song to see details": filtered_music["title"].unique())
+            if song_name:
+                song_details = filtered_music[filtered_music["title"] == song_name]
+                st.write(song_details)
+
+if __main__ == "__main__":
+    main()
