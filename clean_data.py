@@ -78,5 +78,5 @@ data = data.merge(audio_features, on = 'track_id')
 # Removing duplicates and resetting index. Filtering for songs released in 2000-2009
 data = data.drop_duplicates()
 data = data.reset_index(drop=True)
-clean_data = data[(data['release_year'] >= 2000) & (data['release_year'] <= 2009)]
-clean_data.head()
+cleaned_data = data[(data['release_year'] >= 2000) & (data['release_year'] <= 2009)]
+cleaned_data.to_csv('cleaned_data.csv')
