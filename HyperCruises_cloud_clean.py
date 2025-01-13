@@ -50,8 +50,6 @@ data = data[['track_name', 'artist', 'duration_ms',
 # - Rounded and changed datatype of tempo-column from float to int
 # - Dropped redundant time_signature column
 
-audio_features.info()
-
 # Getting rid of null values
 audio_features = audio_features.dropna()
 
