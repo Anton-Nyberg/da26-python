@@ -74,6 +74,7 @@ data['chart_week'] = pd.to_datetime(data['chart_week'], format='%Y-%m-%d')
 
 # Joining together data with audio_features
 data = data.merge(audio_features, on = 'track_id')
+data = data.drop(columns = 'Unnamed: 0')
 
 # Removing duplicates and resetting index. Filtering for songs released in 2000-2009
 data = data.drop_duplicates()
