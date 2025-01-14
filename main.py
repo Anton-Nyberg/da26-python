@@ -2,25 +2,12 @@ import streamlit as st
 import pandas as pd
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from release_year_filter import release_year_filter
 
 # Assuming your data is loaded here
-final_data = pd.read_csv("cleaned_data.csv")
+data = pd.read_csv("cleaned_data.csv")
 
-# Setup Spotify client
-def setup_spotify_client():
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id='YOUR_CLIENT_ID',
-                                                   client_secret='YOUR_CLIENT_SECRET',
-                                                   redirect_uri='YOUR_REDIRECT_URI',
-                                                   scope="playlist-modify-public playlist-modify-private"))
-    return sp
-
-spotify_client = setup_spotify_client()
-
-def export_to_spotify(spotify_client, tracks, playlist_name="My Party Cruise Playlist"):
-    user_id = spotify_client.current_user()['id']
-    playlist = spotify_client.user_playlist_create(user_id, playlist_name, public=True)
-    spotify_client.playlist_add_items(playlist['id'], tracks)
-    return playlist['external_urls']['spotify']
+release_year_filter()
 
 def filter_music(data, mode):
     # Ensure this function is defined in the global scope, not nested inside another function
@@ -69,23 +56,13 @@ def main():
 
     if st.button(f"Show {music_type} Music"):
         mode = music_type.lower().replace(" ", "_")
-        music_filtered = filter_music(final_data, mode)
+        music_filtered = filter_music(data, mode)
         st.write(music_filtered[["track_name", "artist", "popularity"]])
 
         if not music_filtered.empty:
             avg_data = music_filtered[["danceability", "energy", "speechiness"]].mean()
             st.bar_chart(avg_data)
     
-    # Export to Spotify button
-    if st.button("Export to Spotify"):
-        if not music_filtered.empty:
-            track_ids = music_filtered['track_id'].tolist()  # collecting the track_id
-            playlist_url = export_to_spotify(spotify_client, track_ids)
-            st.success(f"Playlist created! [Open Playlist]({playlist_url})")
-        else:
-            st.error("No tracks to export. Please generate a playlist first.")
 
 if __name__ == "__main__":
     main()
-
-#xd
