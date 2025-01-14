@@ -8,4 +8,5 @@ data["dancing_music"] = (
     (data["instrumentalness"].between(0.0, 0.5))
 ).astype(int)
 dancing_music = data[data["dancing_music"] == 1]
-dancing_music_unique = dancing_music .drop_duplicates(subset="track_name", keep='first')
+dancing_music_unique = dancing_music.drop_duplicates(subset="track_name", keep='first')
+dancing_music_unique
