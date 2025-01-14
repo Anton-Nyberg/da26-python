@@ -4,7 +4,7 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
 # Assuming your data is loaded here
-final_data = pd.read_csv("cleaned_data.csv")
+data = pd.read_csv("cleaned_data.csv")
 
 # Setup Spotify client
 def setup_spotify_client():
@@ -69,7 +69,7 @@ def main():
 
     if st.button(f"Show {music_type} Music"):
         mode = music_type.lower().replace(" ", "_")
-        music_filtered = filter_music(final_data, mode)
+        music_filtered = filter_music(data, mode)
         st.write(music_filtered[["track_name", "artist", "popularity"]])
 
         if not music_filtered.empty:
