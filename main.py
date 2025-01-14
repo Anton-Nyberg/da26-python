@@ -75,11 +75,6 @@ def main():
         if not music_filtered.empty:
             avg_data = music_filtered[["danceability", "energy", "speechiness"]].mean()
             st.bar_chart(avg_data)
-
-            song_name = st.selectbox("Select a song to see details:", music_filtered["track_name"].unique())
-            if song_name:
-                song_details = music_filtered[music_filtered["track_name"] == song_name]
-                st.write(song_details)
     
     # Export to Spotify button
     if st.button("Export to Spotify"):
