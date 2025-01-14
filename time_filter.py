@@ -2,10 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Example data
-data = pd.DataFrame({
-    'track_name': ['Song A', 'Song B', 'Song C', 'Song D'],
-    'release_year': [2000, 2004, 2010, 2020]
-})
+data = pd.read_csv('cleaned_data.csv')
 
 # Title
 st.title("Filter Songs by Release Year")
