@@ -1,18 +1,20 @@
 import streamlit as st
 import pandas as pd
 import spotipy
+import os
+from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
 
 # Assuming your data is loaded here
 data = pd.read_csv("cleaned_data.csv")
 
 # Setup Spotify client
-first_draft
+load_dotenv()
 def setup_spotify_client():
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
-        client_id='your_client_id',
-        client_secret='client_secret',
-        redirect_uri='http://localhost:8080/callback',
+        CLIENT_ID = os.getenv("client_id")
+        CLIENT_SECRET = os.getenv("client_secret")
+        REDIRECT_URI = os.getenv("redirect_uri")
         scope="playlist-modify-public playlist-modify-private"))
     return sp
 

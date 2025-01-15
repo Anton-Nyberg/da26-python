@@ -1,1 +1,1 @@
-!pip install google-cloud google-cloud-bigquery google-auth pandas db-dtypes
+!pip install google-cloud google-cloud-bigquery google-auth pandas db-dtypes streamlit spotipy python-dotenv
