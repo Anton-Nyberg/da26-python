@@ -78,6 +78,9 @@ data['chart_week'] = pd.to_datetime(data['chart_week'], format='%Y-%m-%d')
 data = data.merge(audio_features, on = 'track_id')
 data = data.drop(columns = 'Unnamed: 0', errors = 'ignore')
 
+# Filter out obvious christmas music
+data = data[~data['track_name'].str.contains("christmas")]
+
 # Removing duplicates and resetting index. Filtering for songs released in 2000-2009
 data = data.drop_duplicates()
 data = data.reset_index(drop=True)
