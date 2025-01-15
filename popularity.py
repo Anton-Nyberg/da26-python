@@ -42,9 +42,11 @@ def popularity_score(data):
     metrics_data['popularity'] = (
         weights['followers'] * metrics_data['normalized_followers'] +
         weights['weeks'] * metrics_data['normalized_weeks'] +
-        weights['position'] * metrics_data['normalized_position']
+        weights['position'] * highest_position['highest_position']
     )
 
     # Assign 'popularity' column back to the original DataFrame and return it
     data['popularity'] = metrics_data['popularity']
+    data['weeks_on_chart'] = metrics_data['weeks_on_chart']
+    data['highest_position'] = metrics_data['highest_position']
     return data

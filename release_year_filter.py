@@ -1,11 +1,6 @@
 import streamlit as st
-import pandas as pd
 
-# Example data
-data = pd.read_csv('cleaned_data.csv')
-
-# Title
-def release_year_filter():
+def release_year_filter(data):
     st.title("Filter Songs by Release Year")
 
     # Get the min and max years from the data
@@ -21,10 +16,11 @@ def release_year_filter():
     )
 
     # Filter the data based on the selected range
-    filtered_data = data[
+    final_data = data[
         (data['release_year'] >= year_range[0]) & (data['release_year'] <= year_range[1])
     ]
+    return final_data
 
     # Display the filtered data
-    st.write("Filtered Songs:")
-    st.dataframe(filtered_data)
+    #st.write("Filtered Songs:")
+    #st.dataframe(filtered_data)

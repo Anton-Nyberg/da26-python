@@ -24,13 +24,13 @@ def category_filter(data):
         (data["speechiness"] < 0.3)
     ).astype('boolean')
 
-    data["acoustic_music"] = (
+    data["acoustic"] = (
         (data["acousticness"] > 0.8) &
         (data["energy"] <= 0.5) &
         (data["tempo"] <= 100)
     ).astype('boolean')
 
-    data["energetic_music"] = (
+    data["energetic"] = (
         (data["energy"] > 0.8) &
         (data["tempo"] >= 120) &
         (data["danceability"] >= 0.6) &

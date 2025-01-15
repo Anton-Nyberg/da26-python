@@ -1,94 +1,82 @@
 import streamlit as st
 import pandas as pd
 import spotipy
-import os
-from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
+from category_filter import category_filter
+from clean_data import clean_data
 
-# Assuming your data is loaded here
-data = pd.read_csv("cleaned_data.csv")
+# Load the dataset with caching
+@st.cache_resource
+def load_data():
+    return clean_data()
 
-# Setup Spotify client
-load_dotenv()
+# Setup Spotify client with caching
+@st.cache_resource
 def setup_spotify_client():
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
-        CLIENT_ID = os.getenv("client_id")
-        CLIENT_SECRET = os.getenv("client_secret")
-        REDIRECT_URI = os.getenv("redirect_uri")
-        scope="playlist-modify-public playlist-modify-private"))
-    return sp
+    return spotipy.Spotify(auth_manager=SpotifyOAuth(
+        client_id='your_client_id',
+        client_secret='your_client_secret',
+        redirect_uri='http://localhost:8080/callback',
+        scope="playlist-modify-public playlist-modify-private"
+    ))
 
+# Cache Spotify client
 spotify_client = setup_spotify_client()
 
 def filter_music(data, mode):
-    # Definitions for filtering based on mode
-    if mode == "peaceful_lounge":
-        condition = (
-            (data["danceability"].between(0.2, 0.6)) &
-            (data["tempo"] < 110) &
-            (data["energy"].between(0.1, 0.4)) &
-            (data["speechiness"] < 0.3)
-        )
-    elif mode == "acoustic":
-        condition = data["acousticness"] > 0.8
-    elif mode == "relaxing":
-        condition = (
-            (data['tempo'] >= 60) &
-            (data['tempo'] <= 90) &
-            (data['energy'] < 0.5) &
-            (data['speechiness'] < 0.1330) &
-            (data['instrumentalness'] > 0.5) 
-        )
-    elif mode == "dancing":
-        condition = (
-            (data["danceability"].between(0.75, 1)) &
-            (data["tempo"].between(100, 140)) &
-            (data["energy"].between(0.7, 1)) &
-            (data["valence"].between(0.6, 1)) &
-            (data["loudness"].between(-6, 0)) &
-            (data["acousticness"].between(0.0, 0.3)) &
-            (data["instrumentalness"].between(0.0, 0.5))
-        )
-    elif mode == "energetic":
-        condition = (data["energy"] > 0.8)
-    filtered_data = data[condition]
-    return filtered_data.drop_duplicates(subset="track_name", keep="first")
-
+    if mode not in data.columns:
+        raise ValueError(f"Invalid mode: {mode}. Ensure that 'category_filter' is applied first.")
+    filtered_data = data[data[mode]]
+    return filtered_data
 
 def export_to_spotify(spotify_client, tracks, playlist_name=None, mode=None):
     if playlist_name is None:
-        playlist_name = f"My {mode} Cruise Playlist"  # Use mode to set the playlist name if not provided
+        playlist_name = f"My {mode.capitalize()} Playlist"
     user_id = spotify_client.current_user()['id']
     playlist = spotify_client.user_playlist_create(user_id, playlist_name, public=True)
-    # Add tracks in batches of 100 because spotify have a limit
     for i in range(0, len(tracks), 100):
         batch = tracks[i:i+100]
         spotify_client.playlist_add_items(playlist['id'], batch)
     return playlist['external_urls']['spotify']
 
-
 def main():
-    st.title("Party Cruise Music Dashboard")
-    final_data = pd.read_csv("cleaned_data.csv")  # Ensure this data is loaded properly
+    st.title("Party Cruise Music Dashboard :ship:")
+
+    # Load and preprocess data
+    data = load_data()
+    category_filter(data)
+
+    st.title("Filter Songs by Release Year")
+
+    # Get the min and max years from the data
+    min_year = int(data['release_year'].min())
+    max_year = int(data['release_year'].max())
+
+    # Add a slider to select the year range
+    year_range = st.slider(
+        "Select Release Year Range",
+        min_value=min_year,
+        max_value=max_year,
+        value=(min_year, max_year)  # Default to full range
+    )
+
+    # Filter the data based on the selected range
+    final_data = data[
+        (data['release_year'] >= year_range[0]) & (data['release_year'] <= year_range[1])
+    ]
 
     music_type = st.sidebar.selectbox(
         "Select playlist",
-        ("Peaceful Lounge", "Acoustic", "Relaxing", "Energetic", "Dancing")
+        ("Relaxing", "Dance", "Lounge", "Acoustic", "Energetic")
     )
 
-test
-    mode = music_type.lower().replace(" ", "_")
+    mode = music_type.lower()
     music_filtered = filter_music(final_data, mode)
 
     if music_filtered.empty:
         st.error("No tracks to export. Please generate a playlist first.")
     else:
-
-    if st.button(f"Show {music_type} Music"):
-        mode = music_type.lower().replace(" ", "_")
-        music_filtered = filter_music(data, mode)
-
-        st.write(music_filtered[["track_name", "artist", "popularity"]])
+        st.write(music_filtered[["track_name", "artist", "duration_min", "popularity", "weeks_on_chart", "highest_position", "Vibe_Score"]])
         avg_data = music_filtered[["danceability", "energy", "speechiness"]].mean()
         st.bar_chart(avg_data)
 
