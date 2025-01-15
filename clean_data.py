@@ -2,6 +2,8 @@ import pandas as pd
 pd.set_option('display.max_columns', None)
 from google.auth import load_credentials_from_file
 from google.cloud.bigquery import Client
+from popularity import popularity_score
+from category_filter import category_filter
 
 
 # Loading data from BigQuery
@@ -74,10 +76,12 @@ data['chart_week'] = pd.to_datetime(data['chart_week'], format='%Y-%m-%d')
 
 # Joining together data with audio_features
 data = data.merge(audio_features, on = 'track_id')
-data = data.drop(columns = 'Unnamed: 0')
+data = data.drop(columns = 'Unnamed: 0', errors = 'ignore')
 
 # Removing duplicates and resetting index. Filtering for songs released in 2000-2009
 data = data.drop_duplicates()
 data = data.reset_index(drop=True)
 cleaned_data = data[data['release_year'] >= 2000]
+popularity_score(cleaned_data)
+category_filter(cleaned_data)
 cleaned_data.to_csv('cleaned_data.csv')
