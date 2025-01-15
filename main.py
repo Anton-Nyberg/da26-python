@@ -3,6 +3,11 @@ import pandas as pd
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
+# Assuming your data is loaded here
+data = pd.read_csv("cleaned_data.csv")
+
+# Setup Spotify client
+first_draft
 def setup_spotify_client():
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
         client_id='your_client_id',
@@ -69,12 +74,18 @@ def main():
         ("Peaceful Lounge", "Acoustic", "Relaxing", "Energetic", "Dancing")
     )
 
+test
     mode = music_type.lower().replace(" ", "_")
     music_filtered = filter_music(final_data, mode)
 
     if music_filtered.empty:
         st.error("No tracks to export. Please generate a playlist first.")
     else:
+
+    if st.button(f"Show {music_type} Music"):
+        mode = music_type.lower().replace(" ", "_")
+        music_filtered = filter_music(data, mode)
+
         st.write(music_filtered[["track_name", "artist", "popularity"]])
         avg_data = music_filtered[["danceability", "energy", "speechiness"]].mean()
         st.bar_chart(avg_data)
