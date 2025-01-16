@@ -41,7 +41,7 @@ def export_to_spotify(spotify_client, tracks, playlist_name=None, mode=None):
 
 def main():
     st.set_page_config(layout="wide")
-    st.title("Party Cruise Music Dashboard :ship:")
+    st.title(":tada: Party Cruise Music Dashboard :ship:")
 
     # Load and preprocess data
     data = load_data()
@@ -64,7 +64,7 @@ def main():
     # Filter the data based on the selected range
     final_data = data[
         (data['release_year'] >= year_range[0]) & (data['release_year'] <= year_range[1])
-    ]
+    ].sort_values(by = "popularity", ascending = False)
 
     music_type = st.sidebar.selectbox(
         "Select playlist",
@@ -73,12 +73,15 @@ def main():
 
     mode = music_type.lower()
     music_filtered = filter_music(final_data, mode)
+    music_filtered = music_filtered.reset_index(drop=True)
 
     if music_filtered.empty:
         st.error("No tracks to export. Please generate a playlist first.")
     else:
-        st.write(music_filtered[["track_name", "artist", "duration_min", "popularity", "weeks_on_chart", "highest_position", "vibe_score"]])
-        avg_data = music_filtered[["danceability", "energy", "speechiness"]].mean()
+        st.write(music_filtered[["track_name", "artist", "duration_min", "release_year", "popularity", "weeks_on_chart", "highest_position", "vibe_score"]])
+        music_filtered['x_always_one'] = 1
+        st.title(" "*50)
+        avg_data = music_filtered[["danceability", "energy", "valence", "acousticness", "instrumentalness", "speechiness", "x_always_one"]].mean()
         st.bar_chart(avg_data)
 
         if st.button("Export to Spotify"):
