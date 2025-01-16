@@ -98,12 +98,12 @@ def main():
         avg_acousticness = music_filtered["acousticness"].mean()
 
         # Display averages in the sidebar
-        st.sidebar.markdown("### Average Characteristics")
-        st.sidebar.write(f"**Tempo:** {avg_tempo:.2f} BPM")
-        st.sidebar.write(f"**Energy:** {avg_energy:.2f}")
-        st.sidebar.write(f"**Valence:** {avg_valence:.2f}")
-        st.sidebar.write(f"**Danceability:** {avg_danceability:.2f}")
-        st.sidebar.write(f"**Acousticness:** {avg_acousticness:.2f}")
+        st.sidebar.markdown("## Average Characteristics")
+        st.sidebar.write(f"*Tempo:* {avg_tempo:.2f} BPM")
+        st.sidebar.write(f"*Energy:* {avg_energy:.2f}")
+        st.sidebar.write(f"*Valence:* {avg_valence:.2f}")
+        st.sidebar.write(f"*Danceability:* {avg_danceability:.2f}")
+        st.sidebar.write(f"*Acousticness:* {avg_acousticness:.2f}")
     else:
         st.sidebar.markdown("### Average Characteristics")
         st.sidebar.write("No data available for selected mode.")
