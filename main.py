@@ -110,7 +110,7 @@ def main():
 
     # Calculate averages for sidebar
     if not music_filtered.empty:
-        avg_tempo = music_filtered["tempo"].mean()
+        avg_tempo = int(round(music_filtered["tempo"].mean(),0))
         avg_energy = music_filtered["energy"].mean()
         avg_valence = music_filtered["valence"].mean()
         avg_danceability = music_filtered["danceability"].mean()
@@ -118,7 +118,7 @@ def main():
 
         # Display averages in the sidebar
         st.sidebar.markdown("## Average Characteristics")
-        st.sidebar.write(f"*Tempo:* {avg_tempo:.2f} BPM")
+        st.sidebar.write(f"*Tempo:* {avg_tempo} BPM")
         st.sidebar.write(f"*Energy:* {avg_energy:.2f}")
         st.sidebar.write(f"*Valence:* {avg_valence:.2f}")
         st.sidebar.write(f"*Danceability:* {avg_danceability:.2f}")
