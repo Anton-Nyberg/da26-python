@@ -1,2 +1,4 @@
 key.json 
 spotify_api.env
+.cache
+.env
