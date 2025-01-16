@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import spotipy
 import os
+import requests
+import base64
 from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
 from clean_data import clean_data
@@ -41,16 +43,33 @@ def filter_music(data, mode):
 def export_to_spotify(spotify_client, tracks, playlist_name=None, mode=None):
     if playlist_name is None:
         playlist_name = f"My {mode.capitalize()} Playlist"
+    
     user_id = spotify_client.current_user()['id']
     playlist = spotify_client.user_playlist_create(user_id, playlist_name, public=True)
+    
+    # Add tracks to the playlist
     for i in range(0, len(tracks), 100):
         batch = tracks[i:i+100]
         spotify_client.playlist_add_items(playlist['id'], batch)
-    with open("Party_cruise_Medium.jpeg", "rb") as image_file:
-        import base64
-        image_data = base64.b64encode(image_file.read()).decode('utf-8')
-        # Uploading the cover image
+    
+    # GitHub raw file URL for the image
+    github_image_url = "https://raw.githubusercontent.com/Anton-Nyberg/da26-python/first_draft/Party_cruise_Medium.jpeg"
+    
+    try:
+        # Fetch the image from GitHub
+        response = requests.get(github_image_url)
+        response.raise_for_status()  # Raise an error if the request fails
+        
+        # Encode the image in Base64
+        image_data = base64.b64encode(response.content).decode('utf-8')
+        
+        # Upload the image to Spotify
         spotify_client.playlist_upload_cover_image(playlist['id'], image_data)
+    except requests.RequestException as e:
+        print(f"Failed to fetch the image from GitHub: {e}")
+    except Exception as e:
+        print(f"An error occurred while uploading the image: {e}")
+    
     return playlist['external_urls']['spotify']
 
 def main():
