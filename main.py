@@ -15,7 +15,7 @@ def load_data():
 
 st.set_page_config(layout="wide")
 # Setup Spotify client with caching
-#@st.cache_resource
+@st.cache_resource
 def setup_spotify_client():
     return spotipy.Spotify(auth_manager=SpotifyOAuth(
         client_id=os.getenv('client_id'),
