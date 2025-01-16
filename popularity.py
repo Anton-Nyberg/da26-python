@@ -31,11 +31,11 @@ def calculate_popularity_metrics(data):
 
     # Calculate popularity score with weights
     weights = {'followers': 0.5, 'weeks': 0.3, 'position': 0.2}
-    metrics_data['popularity'] = (
+    metrics_data['popularity'] = round(
         weights['followers'] * metrics_data['normalized_followers'] +
         weights['weeks'] * metrics_data['normalized_weeks'] +
         weights['position'] * metrics_data['normalized_position']
-    )
+    ,2)
 
     # Assign calculated metrics back to the original dataset
     data = data.merge(

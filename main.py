@@ -4,16 +4,21 @@ import spotipy
 import os
 from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
-from category_filter import category_filter
 from clean_data import clean_data
 load_dotenv()
+
+# Set page configuration (must be first Streamlit command)
+st.set_page_config(
+    layout="wide",
+    page_title="Party Cruise Dashboard",
+    page_icon="🚢"
+)
 
 # Load the dataset with caching
 @st.cache_resource
 def load_data():
     return clean_data()
 
-st.set_page_config(layout="wide")
 # Setup Spotify client with caching
 @st.cache_resource
 def setup_spotify_client():
@@ -53,7 +58,6 @@ def main():
 
     # Load and preprocess data
     data = load_data()
-    category_filter(data)
 
     st.title("Filter Songs by Release Year")
 
@@ -72,8 +76,9 @@ def main():
     # Filter the data based on the selected range
     final_data = data[
         (data['release_year'] >= year_range[0]) & (data['release_year'] <= year_range[1])
-    ].sort_values(by = "popularity", ascending = False)
+    ].sort_values(by="popularity", ascending=False)
 
+    # Sidebar playlist dropdown
     music_type = st.sidebar.selectbox(
         "Select playlist",
         ("Relaxing", "Dance", "Lounge", "Acoustic", "Energetic")
@@ -82,18 +87,50 @@ def main():
     mode = music_type.lower()
     music_filtered = filter_music(final_data, mode)
     music_filtered = music_filtered.reset_index(drop=True)
+    music_filtered['y_axis=1'] = 1
+
+    # Calculate averages for sidebar
+    if not music_filtered.empty:
+        avg_tempo = music_filtered["tempo"].mean()
+        avg_energy = music_filtered["energy"].mean()
+        avg_valence = music_filtered["valence"].mean()
+        avg_danceability = music_filtered["danceability"].mean()
+        avg_acousticness = music_filtered["acousticness"].mean()
+
+        # Display averages in the sidebar
+        st.sidebar.markdown("### Average Characteristics")
+        st.sidebar.write(f"**Tempo:** {avg_tempo:.2f} BPM")
+        st.sidebar.write(f"**Energy:** {avg_energy:.2f}")
+        st.sidebar.write(f"**Valence:** {avg_valence:.2f}")
+        st.sidebar.write(f"**Danceability:** {avg_danceability:.2f}")
+        st.sidebar.write(f"**Acousticness:** {avg_acousticness:.2f}")
+    else:
+        st.sidebar.markdown("### Average Characteristics")
+        st.sidebar.write("No data available for selected mode.")
 
     if music_filtered.empty:
         st.error("No tracks to export. Please generate a playlist first.")
     else:
-        st.write(music_filtered[["track_name", "artist", "duration_min", "release_year", "popularity", "weeks_on_chart", "highest_position", "vibe_score"]])
-        music_filtered['x_always_one'] = 1
-        st.title(" "*50)
-        avg_data = music_filtered[["danceability", "energy", "valence", "acousticness", "instrumentalness", "speechiness", "x_always_one"]].mean()
-        st.bar_chart(avg_data)
+        # Create two columns for layout
+        col1, col2 = st.columns([3, 2])  # Adjust widths: col1 for table, col2 for bar chart
+        
+        # Display filtered table in the left column (reset index to avoid graying out)
+        with col1:
+            st.write(
+                music_filtered[[
+                    "track_name", "artist", "duration_min", "release_year", "popularity", "weeks_on_chart", "highest_position", "vibe_score"]]
+            )
 
+        # Display bar chart in the right column
+        with col2:
+            avg_data = music_filtered[[
+                "danceability", "energy", "valence", "acousticness", "instrumentalness", "speechiness", 'y_axis=1'
+            ]].mean()
+            st.bar_chart(avg_data)
+
+        # Export button
         if st.button("Export to Spotify"):
-            track_ids = music_filtered['track_id'].tolist()
+            track_ids = music_filtered.reset_index()['track_id'].tolist()
             playlist_url = export_to_spotify(spotify_client, track_ids, mode=mode)
             st.success(f"Playlist created! [Open Playlist]({playlist_url})")
 

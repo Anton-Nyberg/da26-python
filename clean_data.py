@@ -85,7 +85,6 @@ def clean_data():
     # Removing duplicates and resetting index. Filtering for songs released in 2000-2009
     data = data.drop_duplicates()
     cleaned_data = data[data['release_year'] >= 2000]
-
     cleaned_data = category_filter(cleaned_data)
 
     cleaned_data = calculate_popularity_metrics(cleaned_data)
