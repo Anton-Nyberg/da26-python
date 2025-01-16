@@ -46,7 +46,7 @@ def export_to_spotify(spotify_client, tracks, playlist_name=None, mode=None):
     for i in range(0, len(tracks), 100):
         batch = tracks[i:i+100]
         spotify_client.playlist_add_items(playlist['id'], batch)
-    with open("/Users/callebergqvist/Downloads/Party_cruise_Medium.jpeg", "rb") as image_file:
+    with open("Party_cruise_Medium.jpeg", "rb") as image_file:
         import base64
         image_data = base64.b64encode(image_file.read()).decode('utf-8')
         # Uploading the cover image
