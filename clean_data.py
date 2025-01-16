@@ -2,7 +2,7 @@ import pandas as pd
 pd.set_option('display.max_columns', None)
 from google.auth import load_credentials_from_file
 from google.cloud.bigquery import Client
-from popularity import popularity_score
+from popularity import calculate_popularity_metrics
 from category_filter import category_filter
 
 
@@ -85,6 +85,13 @@ def clean_data():
     # Removing duplicates and resetting index. Filtering for songs released in 2000-2009
     data = data.drop_duplicates()
     cleaned_data = data[data['release_year'] >= 2000]
-    popularity_score(cleaned_data)
-    category_filter(cleaned_data)
+
+    cleaned_data = category_filter(cleaned_data)
+
+    cleaned_data = calculate_popularity_metrics(cleaned_data)
+    # Ensure only one 'popularity' column is kept
+    if 'popularity_x' in cleaned_data.columns and 'popularity_y' in cleaned_data.columns:
+        cleaned_data['popularity'] = cleaned_data['popularity_y']  # Keep calculated popularity
+        cleaned_data = cleaned_data.drop(columns=['popularity_x', 'popularity_y'], errors='ignore')
+        
     return cleaned_data.drop_duplicates(subset="track_name", keep="first").reset_index(drop=True)

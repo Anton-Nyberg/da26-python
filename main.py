@@ -40,6 +40,7 @@ def export_to_spotify(spotify_client, tracks, playlist_name=None, mode=None):
     return playlist['external_urls']['spotify']
 
 def main():
+    st.set_page_config(layout="wide")
     st.title("Party Cruise Music Dashboard :ship:")
 
     # Load and preprocess data
@@ -76,7 +77,7 @@ def main():
     if music_filtered.empty:
         st.error("No tracks to export. Please generate a playlist first.")
     else:
-        st.write(music_filtered[["track_name", "artist", "duration_min", "popularity", "weeks_on_chart", "highest_position", "Vibe_Score"]])
+        st.write(music_filtered[["track_name", "artist", "duration_min", "popularity", "weeks_on_chart", "highest_position", "vibe_score"]])
         avg_data = music_filtered[["danceability", "energy", "speechiness"]].mean()
         st.bar_chart(avg_data)
 

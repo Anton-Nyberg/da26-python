@@ -1,14 +1,6 @@
 import pandas as pd
-pd.set_option('display.max_columns', None)
 
-
-# Load dataset
-data = pd.read_csv('cleaned_data.csv')
-
-
-import pandas as pd
-
-def popularity_score(data):
+def calculate_popularity_metrics(data):
     # Ensure necessary columns are present
     required_columns = {'track_id', 'chart_week', 'list_position', 'followers'}
     if not required_columns.issubset(data.columns):
@@ -42,11 +34,14 @@ def popularity_score(data):
     metrics_data['popularity'] = (
         weights['followers'] * metrics_data['normalized_followers'] +
         weights['weeks'] * metrics_data['normalized_weeks'] +
-        weights['position'] * highest_position['highest_position']
+        weights['position'] * metrics_data['normalized_position']
     )
 
-    # Assign 'popularity' column back to the original DataFrame and return it
-    data['popularity'] = metrics_data['popularity']
-    data['weeks_on_chart'] = metrics_data['weeks_on_chart']
-    data['highest_position'] = metrics_data['highest_position']
+    # Assign calculated metrics back to the original dataset
+    data = data.merge(
+        metrics_data[['track_id', 'weeks_on_chart', 'highest_position', 'popularity']].drop_duplicates(),
+        on='track_id',
+        how='left'
+    )
+
     return data

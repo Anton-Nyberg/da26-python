@@ -37,7 +37,7 @@ def category_filter(data):
         (data["valence"] >= 0.6)
     ).astype('boolean')
 
-    data["Vibe_Score"] = (
+    data["vibe_score"] = (
     0.2 * data["danceability"] +
     0.2 * data["energy"] +
     0.05 * data["key"] +
@@ -52,7 +52,7 @@ def category_filter(data):
     )
     
     # Normalize Vibe Score to a 0-1 range
-    vibe_min = data["Vibe_Score"].min()
-    vibe_max = data["Vibe_Score"].max()
-    data["Vibe_Score"] = round((data["Vibe_Score"] - vibe_min) / (vibe_max - vibe_min),2)
-    return
+    vibe_min = data["vibe_score"].min()
+    vibe_max = data["vibe_score"].max()
+    data["vibe_score"] = round((data["vibe_score"] - vibe_min) / (vibe_max - vibe_min),2)
+    return data
