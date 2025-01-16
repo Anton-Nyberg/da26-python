@@ -1,9 +1,12 @@
 import streamlit as st
 import pandas as pd
 import spotipy
+import os
+from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
 from category_filter import category_filter
 from clean_data import clean_data
+load_dotenv()
 
 # Load the dataset with caching
 @st.cache_resource
@@ -11,15 +14,14 @@ def load_data():
     return clean_data()
 
 st.set_page_config(layout="wide")
-
 # Setup Spotify client with caching
 @st.cache_resource
 def setup_spotify_client():
     return spotipy.Spotify(auth_manager=SpotifyOAuth(
-        client_id='your_client_id',
-        client_secret='your_client_secret',
+        client_id=os.getenv('client_id'),
+        client_secret=os.getenv('client_secret'),
         redirect_uri='http://localhost:8080/callback',
-        scope="playlist-modify-public playlist-modify-private"
+        scope="playlist-modify-public playlist-modify-private ugc-image-upload"
     ))
 
 # Cache Spotify client
@@ -39,6 +41,11 @@ def export_to_spotify(spotify_client, tracks, playlist_name=None, mode=None):
     for i in range(0, len(tracks), 100):
         batch = tracks[i:i+100]
         spotify_client.playlist_add_items(playlist['id'], batch)
+    with open("/Users/callebergqvist/Downloads/Party_cruise_Medium.jpeg", "rb") as image_file:
+        import base64
+        image_data = base64.b64encode(image_file.read()).decode('utf-8')
+        # Uploading the cover image
+        spotify_client.playlist_upload_cover_image(playlist['id'], image_data)
     return playlist['external_urls']['spotify']
 
 def main():
