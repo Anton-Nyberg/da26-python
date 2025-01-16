@@ -10,6 +10,8 @@ from clean_data import clean_data
 def load_data():
     return clean_data()
 
+st.set_page_config(layout="wide")
+
 # Setup Spotify client with caching
 @st.cache_resource
 def setup_spotify_client():
@@ -40,7 +42,6 @@ def export_to_spotify(spotify_client, tracks, playlist_name=None, mode=None):
     return playlist['external_urls']['spotify']
 
 def main():
-    st.set_page_config(layout="wide")
     st.title(":tada: Party Cruise Music Dashboard :ship:")
 
     # Load and preprocess data
