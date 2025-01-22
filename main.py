@@ -95,7 +95,7 @@ def main():
     # Filter the data based on the selected range
     final_data = data[
         (data['release_year'] >= year_range[0]) & (data['release_year'] <= year_range[1])
-    ].sort_values(by="popularity", ascending=False)
+    ].sort_values(by="vibe_score", ascending=False)
 
     # Sidebar playlist dropdown
     music_type = st.sidebar.selectbox(
