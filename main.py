@@ -137,7 +137,7 @@ def main():
         with col1:
             st.write(
                 music_filtered[[
-                    "track_name", "artist", "duration_min", "release_year", "popularity", "weeks_on_chart", "highest_position", "vibe_score"]]
+                    "track_name", "artist", "duration_min", "release_year", "vibe_score", "popularity", "weeks_on_chart", "highest_position"]]
             )
 
         # Display bar chart in the right column
