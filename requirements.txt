@@ -6,4 +6,3 @@ db-dtypes
 streamlit 
 spotipy 
 python-dotenv
-streamlit-lottie
