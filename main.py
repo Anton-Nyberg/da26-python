@@ -123,6 +123,7 @@ def main():
         st.sidebar.write(f"*Valence:* {avg_valence:.2f}")
         st.sidebar.write(f"*Danceability:* {avg_danceability:.2f}")
         st.sidebar.write(f"*Acousticness:* {avg_acousticness:.2f}")
+        st.sidebar.write(f"*Vibe Score:* {music_filtered["vibe_score"].mean():.2f}")
     else:
         st.sidebar.markdown("### Average Characteristics")
         st.sidebar.write("No data available for selected mode.")
