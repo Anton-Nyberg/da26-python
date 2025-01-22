@@ -53,7 +53,7 @@ def export_to_spotify(spotify_client, tracks, playlist_name=None, mode=None):
         spotify_client.playlist_add_items(playlist['id'], batch)
     
     # GitHub raw file URL for the image
-    github_image_url = "https://raw.githubusercontent.com/Anton-Nyberg/da26-python/first_draft/Party_cruise_Medium.jpeg"
+    github_image_url = "https://raw.githubusercontent.com/Anton-Nyberg/da26-python/main/Party_cruise_Medium.jpeg"
     
     try:
         # Fetch the image from GitHub
