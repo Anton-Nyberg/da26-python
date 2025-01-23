@@ -1,4 +1,2 @@
-# da26-python
-
 Requirements:
-- key.json in root
+- key.json & .env in root
